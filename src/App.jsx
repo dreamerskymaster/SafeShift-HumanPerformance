@@ -1,65 +1,113 @@
-import { useState, useEffect, useRef } from "react";
-
-// ─── DESIGN SYSTEM ─────────────────────────────────────────
-const C = {
-  bg: "#F2F2F7",
-  card: "#FFFFFF",
-  primary: "#0A84FF",
-  primaryLight: "rgba(10, 132, 255, 0.12)",
-  green: "#34C759",
-  greenLight: "rgba(52, 199, 89, 0.12)",
-  orange: "#FF9500",
-  orangeLight: "rgba(255, 149, 0, 0.12)",
-  red: "#FF3B30",
-  redLight: "rgba(255, 59, 48, 0.12)",
-  yellow: "#FFCC00",
-  purple: "#AF52DE",
-  purpleLight: "rgba(175, 82, 222, 0.12)",
-  teal: "#5856D6", // Using indigo for a more modern shift
-  text: "#000000",
-  text2: "#3C3C43",
-  text3: "#8E8E93",
-  sep: "rgba(60, 60, 67, 0.1)",
-  border: "rgba(60, 60, 67, 0.08)",
-  grayBg: "#E5E5EA",
-  grayFill: "rgba(120, 120, 128, 0.16)",
-  shadow: "0 8px 24px -4px rgba(0,0,0,0.06), 0 2px 6px -1px rgba(0,0,0,0.04)",
-  shadowLarge: "0 20px 40px -8px rgba(0,0,0,0.12), 0 8px 16px -4px rgba(0,0,0,0.08)",
-};
+import React from 'react';
 
 const font = "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif";
 
+// ─── ICON SYSTEM ──────────────────────────────────────────
+const Icon = ({ name, size = 24, color = "currentColor", fill = "none" }) => {
+  const icons = {
+    home: <React.Fragment><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></React.Fragment>,
+    log: <React.Fragment><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></React.Fragment>,
+    journal: <React.Fragment><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></React.Fragment>,
+    vitals: <React.Fragment><circle cx="12" cy="12" r="7"/><polyline points="12 9 12 12 13.5 13.5"/><path d="M16.51 7.35l3.02-6.22a.45.45 0 0 0-.58-.61l-6.19 3M7.49 16.65l-3.02 6.22a.45.45 0 0 0 .58.61l6.19-3M6.65 16.51l-6.22-3.02a.45.45 0 0 0-.61.58l3 6.19M17.35 7.49l6.22 3.02a.45.45 0 0 0 .61-.58l-3-6.19"/></React.Fragment>,
+    history: <React.Fragment><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></React.Fragment>,
+    heart: <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>,
+    temp: <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>,
+    battery: <React.Fragment><rect width="16" height="10" x="2" y="7" rx="2"/><path d="M22 11v2"/></React.Fragment>,
+    user: <React.Fragment><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></React.Fragment>,
+    shield: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/>,
+    alert: <React.Fragment><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></React.Fragment>,
+    worker: <React.Fragment><path d="M2 18a6 6 0 0 1 6-6h8a6 6 0 0 1 6 6"/><path d="M7 10h10"/><path d="M12 4v6"/><path d="M9 4h6"/></React.Fragment>,
+    check: <polyline points="20 6 9 17 4 12"/>,
+    stretch: <React.Fragment><path d="m7 21 3-3 3 3"/><path d="m7 3 3 3 3-3"/><path d="M10 6v12"/><path d="M22 10.37V19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-8.63"/><path d="M14 6H6"/></React.Fragment>,
+    emergency: <React.Fragment><path d="M12 2v20"/><path d="M2 12h20"/><path d="m4.93 4.93 14.14 14.14"/><path d="m4.93 19.07 14.14-14.14"/></React.Fragment>,
+    file: <React.Fragment><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></React.Fragment>,
+    plus: <React.Fragment><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></React.Fragment>,
+    chevronRight: <polyline points="9 18 15 12 9 6"/>,
+    posture: <React.Fragment><path d="M12 5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/><path d="M11 5h2v6h5v2h-5v7h-2v-7H6v-2h5V5Z"/></React.Fragment>
+  };
+
+  return (
+    <svg 
+      width={size} 
+      height={size} 
+      viewBox="0 0 24 24" 
+      fill={fill} 
+      stroke={color} 
+      strokeWidth="2.5" 
+      strokeLinecap="round" 
+      strokeLinejoin="round"
+      style={{ display: "block" }}
+    >
+      {icons[name] || null}
+    </svg>
+  );
+};
+
 // ─── SHARED COMPONENTS ─────────────────────────────────────
-const StatusBar = ({ hasAlert }) => (
-  <div style={{ height: 54, padding: "14px 30px 0", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 15, fontWeight: 600, fontFamily: font, flexShrink: 0, position: "relative", zIndex: 10 }}>
-    <span style={{ letterSpacing: -0.2, fontWeight: 700 }}>9:41</span>
-    <div style={{ 
-      position: "absolute", 
-      top: 11, 
-      left: "50%", 
-      transform: "translateX(-50%)", 
-      width: 126, 
-      height: 36, 
-      background: "#000", 
-      borderRadius: 20, 
-      boxShadow: hasAlert ? `0 0 20px ${C.orange}40` : "none",
-      transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-around",
-      padding: "0 12px"
-    }}>
-      {hasAlert && <div style={{ width: 6, height: 6, borderRadius: 3, background: C.orange }} />}
-    </div>
-    <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-      <svg width="18" height="12" viewBox="0 0 18 12"><path d="M1 8.5V11.5H3V8.5H1ZM5.5 6V11.5H7.5V6H5.5ZM10 3.5V11.5H12V3.5H10ZM14.5 0.5V11.5H16.5V0.5H14.5Z" fill="#000"/></svg>
-      <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 3.6C9.8 3.6 11.4 4.3 12.6 5.4L14 4C12.4 2.5 10.3 1.6 8 1.6C5.7 1.6 3.6 2.5 2 4L3.4 5.4C4.6 4.3 6.2 3.6 8 3.6ZM8 7.2C8.9 7.2 9.7 7.6 10.3 8.1L11.7 6.7C10.7 5.8 9.4 5.2 8 5.2C6.6 5.2 5.3 5.8 4.3 6.7L5.7 8.1C6.3 7.6 7.1 7.2 8 7.2ZM9.2 10.4C9.2 11.1 8.7 11.6 8 11.6C7.3 11.6 6.8 11.1 6.8 10.4C6.8 9.7 7.3 9.2 8 9.2C8.7 9.2 9.2 9.7 9.2 10.4Z" fill="#000"/></svg>
-      <div style={{ position: "relative", width: 25, height: 12, border: "1.5px solid rgba(0,0,0,0.35)", borderRadius: 3, padding: 1 }}>
-        <div style={{ width: "85%", height: "100%", background: "#000", borderRadius: 1 }} />
+const StatusBar = ({ hasAlert }) => {
+  const [time, setTime] = React.useState(new Date());
+
+  React.useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (date) => {
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    return `${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
+  };
+
+  return (
+    <div style={{ height: 54, padding: "14px 24px 0 32px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 16, fontWeight: 700, fontFamily: font, flexShrink: 0, position: "relative", zIndex: 10 }}>
+      <span style={{ letterSpacing: -0.5, width: 54, display: "flex", justifyContent: "center" }}>{formatTime(time)}</span>
+      
+      {/* Dynamic Island */}
+      <div style={{ 
+        position: "absolute", 
+        top: 11, 
+        left: "50%", 
+        transform: "translateX(-50%)", 
+        width: 126, 
+        height: 37, 
+        background: "#000", 
+        borderRadius: 200, 
+        boxShadow: hasAlert ? `0 0 20px ${C.orange}40` : "none",
+        transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-around",
+        padding: "0 12px"
+      }}>
+        {hasAlert && <div style={{ width: 6, height: 6, borderRadius: 3, background: C.orange, boxShadow: `0 0 10px ${C.orange}` }} />}
+      </div>
+
+      <div style={{ display: "flex", gap: 7, alignItems: "center", width: 70, justifyContent: "flex-end" }}>
+        {/* Cellular Signal Icon */}
+        <svg width="18" height="12" viewBox="0 0 18 12">
+          <rect x="0" y="8" width="3" height="4" rx="1" fill="#000" />
+          <rect x="4" y="6" width="3" height="6" rx="1" fill="#000" />
+          <rect x="8" y="3" width="3" height="9" rx="1" fill="#000" />
+          <rect x="12" y="0" width="3" height="12" rx="1" fill="rgba(0,0,0,0.2)" />
+        </svg>
+
+        {/* Wi-Fi Icon */}
+        <svg width="17" height="12" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M5 12.55a11 11 0 0 1 14.08 0" />
+          <path d="M1.42 9a16 16 0 0 1 21.16 0" />
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
+          <line x1="12" y1="20" x2="12.01" y2="20" />
+        </svg>
+
+        {/* Battery Icon */}
+        <div style={{ position: "relative", width: 25, height: 12, border: "1.5px solid rgba(0,0,0,0.35)", borderRadius: 4, padding: "1px", display: "flex", alignItems: "center" }}>
+          <div style={{ width: "85%", height: 7, background: "#000", borderRadius: 1.5 }} />
+          <div style={{ position: "absolute", right: -3.5, top: 4, width: 1.5, height: 4, background: "rgba(0,0,0,0.35)", borderTopRightRadius: 1, borderBottomRightRadius: 1 }} />
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const HomeIndicator = () => (
   <div style={{ height: 34, display: "flex", alignItems: "flex-end", justifyContent: "center", paddingBottom: 8, flexShrink: 0 }}>
@@ -67,7 +115,7 @@ const HomeIndicator = () => (
   </div>
 );
 
-const PhoneFrame = ({ children, footer, hasAlert }) => (
+const PhoneFrame = ({ children, footer, overlay, hasAlert }) => (
   <div className="phone-container" style={{ 
     width: "100%",
     maxWidth: 430,
@@ -89,6 +137,7 @@ const PhoneFrame = ({ children, footer, hasAlert }) => (
     <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch", position: "relative" }}>
       {children}
     </div>
+    {overlay}
     {footer}
     <HomeIndicator />
   </div>
@@ -128,9 +177,9 @@ const NavBar = ({ title, large, showBack, onBack, right }) => (
 const TabBar = ({ tabs, active, onSelect }) => (
   <div style={{ height: 52, background: "rgba(249,249,249,0.94)", backdropFilter: "blur(30px)", WebkitBackdropFilter: "blur(30px)", borderTop: `0.33px solid ${C.border}`, display: "flex", justifyContent: "space-around", alignItems: "center", zIndex: 20 }}>
     {tabs.map(t => (
-      <button key={t.id} onClick={() => onSelect(t.id)} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 1, color: active === t.id ? C.primary : C.text3, padding: "4px 0", minWidth: 56, outline: "none" }}>
-        <span style={{ fontSize: 22, lineHeight: 1 }}>{t.icon}</span>
-        <span style={{ fontSize: 10, fontWeight: 500, letterSpacing: 0.1 }}>{t.label}</span>
+      <button key={t.id} onClick={() => onSelect(t.id)} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 3, color: active === t.id ? C.primary : C.text3, padding: "4px 0", minWidth: 56, outline: "none" }}>
+        <Icon name={t.iconName} size={22} color={active === t.id ? C.primary : C.text3} />
+        <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: 0.1 }}>{t.label}</span>
       </button>
     ))}
   </div>
@@ -158,9 +207,9 @@ const Section = ({ title, action, style }) => (
   </div>
 );
 
-const Row = ({ icon, title, sub, right, rightColor, badge, chevron, onClick, last }) => (
+const Row = ({ icon, iconName, title, sub, right, rightColor, badge, chevron, onClick, last }) => (
   <button onClick={onClick} style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 16px", background: "transparent", border: "none", borderBottom: last ? "none" : `0.33px solid ${C.sep}`, width: "100%", cursor: onClick ? "pointer" : "default", textAlign: "left", fontFamily: font }}>
-    {icon && <span style={{ fontSize: 20, width: 30, textAlign: "center", flexShrink: 0 }}>{icon}</span>}
+    {iconName ? <Icon name={iconName} size={20} color={C.primary} /> : (icon && <span style={{ fontSize: 20, width: 30, textAlign: "center", flexShrink: 0 }}>{icon}</span>)}
     <div style={{ flex: 1, minWidth: 0 }}>
       <div style={{ fontSize: 16, fontWeight: 400, color: C.text, lineHeight: 1.3 }}>{title}</div>
       {sub && <div style={{ fontSize: 13, color: C.text3, marginTop: 1, lineHeight: 1.3 }}>{sub}</div>}
@@ -221,11 +270,11 @@ const SegmentedControl = ({ items, active, onChange }) => (
   </div>
 );
 
-const StatBox = ({ value, label, color, icon }) => (
-  <div style={{ flex: 1, background: C.card, borderRadius: 14, padding: "14px 12px", textAlign: "center" }}>
-    {icon && <div style={{ fontSize: 18, marginBottom: 4 }}>{icon}</div>}
+const StatBox = ({ value, label, color, iconName }) => (
+  <div style={{ flex: 1, background: C.card, borderRadius: 14, padding: "14px 12px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+    {iconName && <div style={{ marginBottom: 6 }}><Icon name={iconName} size={18} color={color || C.text3} /></div>}
     <div style={{ fontSize: 26, fontWeight: 800, color: color || C.text, letterSpacing: -0.5, lineHeight: 1 }}>{value}</div>
-    <div style={{ fontSize: 11, color: C.text3, marginTop: 5, fontWeight: 500, letterSpacing: 0.2, textTransform: "uppercase" }}>{label}</div>
+    <div style={{ fontSize: 11, color: C.text3, marginTop: 5, fontWeight: 600, letterSpacing: 0.2, textTransform: "uppercase" }}>{label}</div>
   </div>
 );
 
@@ -245,9 +294,9 @@ const BarChart = ({ items }) => (
   </div>
 );
 
-const AlertBanner = ({ icon, color, bg, title, message }) => (
+const AlertBanner = ({ iconName, color, bg, title, message }) => (
   <div style={{ margin: "0 20px 14px", padding: "13px 14px", background: bg, borderRadius: 14, display: "flex", alignItems: "flex-start", gap: 10, border: `1px solid ${color}20` }}>
-    <span style={{ fontSize: 20, flexShrink: 0, marginTop: 1 }}>{icon}</span>
+    {iconName && <div style={{ flexShrink: 0, marginTop: 2 }}><Icon name={iconName} size={20} color={color} /></div>}
     <div style={{ flex: 1 }}>
       <div style={{ fontSize: 14, fontWeight: 600, color }}>{title}</div>
       <div style={{ fontSize: 13, color: C.text2, marginTop: 2, lineHeight: 1.4 }}>{message}</div>
@@ -330,22 +379,24 @@ const RoleSelect = ({ onPick }) => (
     </div>
     <div style={{ fontSize: 12, fontWeight: 700, color: C.text3, letterSpacing: 0.8, marginBottom: 10, paddingLeft: 4, textTransform: "uppercase" }}>Select Your Role</div>
     {[
-      { role: "worker", icon: "👷", title: "Worker", desc: "Log symptoms, track vitals, view your health data", gradient: "linear-gradient(135deg, #0A84FF08, #0A84FF05)" },
-      { role: "supervisor", icon: "📋", title: "Line Supervisor", desc: "Monitor team health, review shift reports", gradient: "linear-gradient(135deg, #AF52DE08, #AF52DE05)" },
-      { role: "safety", icon: "🔒", title: "Safety Officer", desc: "Analyze plant trends, manage incidents", gradient: "linear-gradient(135deg, #34C75908, #34C75905)" },
+      { role: "worker", iconName: "worker", title: "Worker", desc: "Log symptoms, track vitals, view your health data", gradient: "linear-gradient(135deg, #0A84FF08, #0A84FF05)" },
+      { role: "supervisor", iconName: "journal", title: "Line Supervisor", desc: "Monitor team health, review shift reports", gradient: "linear-gradient(135deg, #AF52DE08, #AF52DE05)" },
+      { role: "safety", iconName: "shield", title: "Safety Officer", desc: "Analyze plant trends, manage incidents", gradient: "linear-gradient(135deg, #34C75908, #34C75905)" },
     ].map(r => (
       <button key={r.role} onClick={() => onPick(r.role)} style={{ display: "flex", alignItems: "center", gap: 16, width: "100%", padding: "20px 18px", marginBottom: 12, background: C.card, border: `0.5px solid ${C.border}`, borderRadius: 24, cursor: "pointer", textAlign: "left", fontFamily: font, boxShadow: C.shadow }}>
-        <div style={{ width: 56, height: 56, borderRadius: 16, background: r.gradient, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>{r.icon}</div>
+        <div style={{ width: 56, height: 56, borderRadius: 16, background: r.gradient, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          <Icon name={r.iconName} size={28} color={C.primary} />
+        </div>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 18, fontWeight: 700, color: C.text, letterSpacing: -0.2 }}>{r.title}</div>
           <div style={{ fontSize: 13, color: C.text3, marginTop: 3, lineHeight: 1.4 }}>{r.desc}</div>
         </div>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.3, flexShrink: 0 }}><path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        <Icon name="chevronRight" size={20} color={C.text3} />
       </button>
     ))}
     <Card style={{ marginTop: 16, display: "flex", alignItems: "center", gap: 12, border: `1px solid ${C.sep}` }}>
       <div style={{ width: 44, height: 44, borderRadius: 12, background: "linear-gradient(135deg, #30D158, #0A84FF)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-        <span style={{ fontSize: 22 }}>⌚</span>
+        <Icon name="vitals" size={22} color="#fff" />
       </div>
       <div style={{ flex: 1 }}>
         <div style={{ fontSize: 15, fontWeight: 600, color: C.text }}>SafeShift Band v2.1</div>
@@ -358,7 +409,7 @@ const RoleSelect = ({ onPick }) => (
 
 // WORKER HOME
 const WorkerHome = ({ go }) => {
-  const [time, setTime] = useState("4h 23m");
+  const [time, setTime] = React.useState("4h 23m");
   return (
     <div style={{ paddingBottom: 70 }}>
       <NavBar title="Good Morning, Ajith" large />
@@ -368,13 +419,13 @@ const WorkerHome = ({ go }) => {
         <span style={{ fontSize: 13, fontWeight: 600, color: C.green }}>{time} remaining</span>
       </div>
 
-      <AlertBanner icon="⚠️" color={C.orange} bg={C.orangeLight} title="Posture Alert" message="Forward lean detected for 18 min at Station 7. Consider a stretch break." />
+      <AlertBanner iconName="posture" color={C.orange} bg={C.orangeLight} title="Posture Alert" message="Forward lean detected for 18 min at Station 7. Consider a stretch break." />
 
       <Section title="Live Vitals" action={{ label: "See More", fn: () => go("vitals") }} />
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, padding: "0 20px" }}>
         <Card>
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
-            <span style={{ fontSize: 14 }}>❤️</span>
+            <Icon name="heart" size={16} color={C.red} />
             <span style={{ fontSize: 12, fontWeight: 600, color: C.text3, textTransform: "uppercase", letterSpacing: 0.5 }}>Heart Rate</span>
           </div>
           <div style={{ fontSize: 34, fontWeight: 800, color: C.red, letterSpacing: -1, lineHeight: 1 }}>78</div>
@@ -383,7 +434,7 @@ const WorkerHome = ({ go }) => {
         </Card>
         <Card>
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
-            <span style={{ fontSize: 14 }}>🌡️</span>
+            <Icon name="temp" size={16} color={C.orange} />
             <span style={{ fontSize: 12, fontWeight: 600, color: C.text3, textTransform: "uppercase", letterSpacing: 0.5 }}>Skin Temp</span>
           </div>
           <div style={{ fontSize: 34, fontWeight: 800, color: C.orange, letterSpacing: -1, lineHeight: 1 }}>36.4</div>
@@ -392,7 +443,7 @@ const WorkerHome = ({ go }) => {
         </Card>
         <Card>
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
-            <span style={{ fontSize: 14 }}>🔋</span>
+            <Icon name="battery" size={16} color={C.green} />
             <span style={{ fontSize: 12, fontWeight: 600, color: C.text3, textTransform: "uppercase", letterSpacing: 0.5 }}>Fatigue Index</span>
           </div>
           <div style={{ fontSize: 34, fontWeight: 800, color: C.green, letterSpacing: -1, lineHeight: 1 }}>Low</div>
@@ -401,7 +452,7 @@ const WorkerHome = ({ go }) => {
         </Card>
         <Card>
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
-            <span style={{ fontSize: 14 }}>🧍</span>
+            <Icon name="posture" size={16} color={C.orange} />
             <span style={{ fontSize: 12, fontWeight: 600, color: C.text3, textTransform: "uppercase", letterSpacing: 0.5 }}>Posture</span>
           </div>
           <div style={{ fontSize: 34, fontWeight: 800, color: C.orange, letterSpacing: -1, lineHeight: 1 }}>Fair</div>
@@ -417,19 +468,19 @@ const WorkerHome = ({ go }) => {
       <Section title="Quick Actions" />
       <div style={{ padding: "0 20px" }}>
         <Card style={{ padding: 0, overflow: "hidden" }}>
-          <Row icon="📝" title="Log Symptom" sub="Record pain or discomfort" onClick={() => go("log")} />
-          <Row icon="📖" title="Shift Journal" sub="3 entries today" onClick={() => go("journal")} />
-          <Row icon="📊" title="My History" sub="7-day pain trends" onClick={() => go("history")} />
-          <Row icon="🧘" title="Stretch Guide" sub="Recommended: lower back routine" onClick={() => go("stretch")} />
-          <Row icon="🆘" title="Report Injury" sub="Alert safety team immediately" onClick={() => go("report")} last />
+          <Row iconName="log" title="Log Symptom" sub="Record pain or discomfort" onClick={() => go("log")} />
+          <Row iconName="journal" title="Shift Journal" sub="3 entries today" onClick={() => go("journal")} />
+          <Row iconName="history" title="My History" sub="7-day pain trends" onClick={() => go("history")} />
+          <Row iconName="stretch" title="Stretch Guide" sub="Recommended: lower back routine" onClick={() => go("stretch")} />
+          <Row iconName="emergency" title="Report Injury" sub="Alert safety team immediately" onClick={() => go("report")} last />
         </Card>
       </div>
 
       <Section title="Today's Summary" />
       <div style={{ padding: "0 20px", display: "flex", gap: 10 }}>
-        <StatBox value="2" label="Symptoms" color={C.orange} />
-        <StatBox value="7.2k" label="Steps" color={C.primary} />
-        <StatBox value="94%" label="Good Posture" color={C.green} />
+        <StatBox value="2" label="Symptoms" color={C.orange} iconName="log" />
+        <StatBox value="7.2k" label="Steps" color={C.primary} iconName="worker" />
+        <StatBox value="94%" label="Good Posture" color={C.green} iconName="posture" />
       </div>
     </div>
   );
@@ -437,18 +488,18 @@ const WorkerHome = ({ go }) => {
 
 // LOG SYMPTOM
 const LogSymptom = ({ onBack }) => {
-  const [parts, setParts] = useState(["lower_back"]);
-  const [pain, setPain] = useState(4);
-  const [activity, setActivity] = useState("Repetitive Motion");
-  const [notes, setNotes] = useState("");
-  const [saved, setSaved] = useState(false);
+  const [parts, setParts] = React.useState(["lower_back"]);
+  const [pain, setPain] = React.useState(4);
+  const [activity, setActivity] = React.useState("Repetitive Motion");
+  const [notes, setNotes] = React.useState("");
+  const [saved, setSaved] = React.useState(false);
   const toggle = id => setParts(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
   const activities = ["Lifting", "Standing", "Bending", "Repetitive Motion", "Walking", "Sitting", "Overhead Reach", "Carrying"];
 
   if (saved) return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "80%", padding: 40, textAlign: "center" }}>
       <div style={{ width: 80, height: 80, borderRadius: 40, background: C.greenLight, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
-        <span style={{ fontSize: 40 }}>✓</span>
+        <Icon name="check" size={40} color={C.green} />
       </div>
       <h2 style={{ fontSize: 24, fontWeight: 700, color: C.text, margin: "0 0 8px" }}>Entry Saved</h2>
       <p style={{ fontSize: 15, color: C.text3, lineHeight: 1.5, margin: 0 }}>Your symptom has been logged for Shift A at 10:14 AM. Your supervisor has been notified.</p>
@@ -510,7 +561,7 @@ const LogSymptom = ({ onBack }) => {
 
 // SHIFT JOURNAL
 const Journal = ({ onBack }) => {
-  const [seg, setSeg] = useState(0);
+  const [seg, setSeg] = React.useState(0);
   const entries = [
     { time: "10:14 AM", type: "Symptom", color: C.orange, pain: 4, area: "Lower Back", act: "Repetitive Motion", note: "Mild discomfort after 2 hours on station. Wearable showed elevated HR." },
     { time: "9:45 AM", type: "Stretch Break", color: C.green, pain: null, area: null, act: null, note: "Completed 5-min lower back stretch routine. Pain reduced from 3 to 1." },
@@ -575,9 +626,9 @@ const History = ({ onBack }) => (
         </div>
       </Card>
       <div style={{ display: "flex", gap: 10, marginBottom: 12 }}>
-        <StatBox value="18" label="Entries" color={C.primary} icon="📝" />
-        <StatBox value="4" label="Alerts" color={C.orange} icon="⚠️" />
-        <StatBox value="3" label="Stretches" color={C.green} icon="🧘" />
+        <StatBox value="18" label="Entries" color={C.primary} iconName="log" />
+        <StatBox value="4" label="Alerts" color={C.orange} iconName="alert" />
+        <StatBox value="3" label="Stretches" color={C.green} iconName="stretch" />
       </div>
       <Card style={{ marginBottom: 12 }}>
         <div style={{ fontSize: 12, fontWeight: 700, color: C.text3, letterSpacing: 0.8, marginBottom: 14, textTransform: "uppercase" }}>Most Affected Areas</div>
@@ -606,7 +657,7 @@ const Vitals = ({ onBack }) => (
   <div style={{ paddingBottom: 20 }}>
     <NavBar showBack onBack={onBack} />
     <NavBar title="Wearable Vitals" large />
-    <AlertBanner icon="⌚" color={C.primary} bg={C.primaryLight} title="SafeShift Band v2.1" message="All sensors active. Battery: 72%. Last calibration: 2 days ago." />
+    <AlertBanner iconName="vitals" color={C.primary} bg={C.primaryLight} title="SafeShift Band v2.1" message="All sensors active. Battery: 72%. Last calibration: 2 days ago." />
     <div style={{ padding: "0 20px" }}>
       {[
         { label: "Heart Rate", val: "78 bpm", data: [72,74,78,82,76,74,79,85,80,77,75,78,74,76,78], color: C.red, status: "Resting zone", detail: "Min: 68 · Max: 92 · Avg: 77" },
@@ -635,7 +686,7 @@ const Vitals = ({ onBack }) => (
 
 // STRETCH GUIDE
 const Stretch = ({ onBack }) => {
-  const [active, setActive] = useState(0);
+  const [active, setActive] = React.useState(0);
   const stretches = [
     { name: "Cat-Cow Stretch", target: "Lower Back", dur: "30 sec", reps: "5 reps", desc: "On hands and knees, alternate between arching and rounding your back. Breathe deeply with each movement.", icon: "🐱" },
     { name: "Standing Hamstring Stretch", target: "Lower Back / Legs", dur: "20 sec each", reps: "3 per side", desc: "Place one foot on a low surface. Keep your back straight and lean forward from the hips until you feel a gentle stretch.", icon: "🦵" },
@@ -647,7 +698,7 @@ const Stretch = ({ onBack }) => {
     <div style={{ paddingBottom: 20 }}>
       <NavBar showBack onBack={onBack} />
       <NavBar title="Stretch Guide" large />
-      <AlertBanner icon="💡" color={C.green} bg={C.greenLight} title="Recommended for You" message="Based on your lower back symptoms and posture alerts, we suggest these stretches." />
+      <AlertBanner iconName="log" color={C.green} bg={C.greenLight} title="Recommended for You" message="Based on your lower back symptoms and posture alerts, we suggest these stretches." />
       <div style={{ padding: "0 20px" }}>
         {stretches.map((s, i) => (
           <Card key={i} style={{ marginBottom: 10, border: active === i ? `2px solid ${C.green}` : `1px solid ${C.sep}`, cursor: "pointer" }} onClick={() => setActive(i)}>
@@ -694,13 +745,16 @@ const Supervisor = () => {
       <Section title="Active Alerts" />
       <div style={{ padding: "0 20px" }}>
         {[
-          { icon: "🔴", name: "R. Kumar", msg: "Pain 7/10 (lower back) + high fatigue. HR: 96 bpm.", time: "3m ago" },
-          { icon: "🟡", name: "M. Singh", msg: "Recurring wrist pain, 5th entry this week. Consider rotation.", time: "28m" },
-          { icon: "🟡", name: "S. Patel", msg: "3 posture alerts in 2 hours at Station 2.", time: "45m" },
+          { iconName: "alert", color: C.red, name: "R. Kumar", msg: "Pain 7/10 (lower back) + high fatigue. HR: 96 bpm.", time: "3m ago" },
+          { iconName: "alert", color: C.orange, name: "M. Singh", msg: "Recurring wrist pain, 5th entry this week. Consider rotation.", time: "28m" },
+          { iconName: "posture", color: C.orange, name: "S. Patel", msg: "3 posture alerts in 2 hours at Station 2.", time: "45m" },
         ].map((a, i) => (
-          <Card key={i} style={{ marginBottom: 8, borderLeft: `4px solid ${i === 0 ? C.red : C.orange}` }}>
+          <Card key={i} style={{ marginBottom: 8, borderLeft: `4px solid ${a.color}` }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-              <span style={{ fontSize: 15, fontWeight: 600 }}>{a.icon} {a.name}</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <Icon name={a.iconName} size={16} color={a.color} />
+                <span style={{ fontSize: 15, fontWeight: 600 }}>{a.name}</span>
+              </div>
               <span style={{ fontSize: 12, color: C.text3 }}>{a.time}</span>
             </div>
             <div style={{ fontSize: 14, color: C.text2, lineHeight: 1.4 }}>{a.msg}</div>
@@ -817,10 +871,10 @@ const Safety = () => (
     <Section title="Recent Reports" />
     <div style={{ padding: "0 20px" }}>
       <Card style={{ padding: 0, overflow: "hidden" }}>
-        <Row icon="📄" title="Weekly Safety Summary" sub="Mar 3 to Mar 9, 2026" right="PDF" rightColor={C.primary} />
-        <Row icon="📊" title="Ergonomic Risk Assessment" sub="Assembly Line 3, Q1 2026" right="PDF" rightColor={C.primary} />
-        <Row icon="📋" title="Incident Report #47" sub="Near-miss, Weld Shop B, Mar 6" right="Open" rightColor={C.primary} />
-        <Row icon="📈" title="Wearable ROI Analysis" sub="6-month program evaluation" right="PDF" rightColor={C.primary} last />
+        <Row iconName="file" title="Weekly Safety Summary" sub="Mar 3 to Mar 9, 2026" right="PDF" rightColor={C.primary} />
+        <Row iconName="history" title="Ergonomic Risk Assessment" sub="Assembly Line 3, Q1 2026" right="PDF" rightColor={C.primary} />
+        <Row iconName="log" title="Incident Report #47" sub="Near-miss, Weld Shop B, Mar 6" right="Open" rightColor={C.primary} />
+        <Row iconName="history" title="Wearable ROI Analysis" sub="6-month program evaluation" right="PDF" rightColor={C.primary} last />
       </Card>
     </div>
   </div>
@@ -828,11 +882,11 @@ const Safety = () => (
 
 // REPORT INJURY
 const ReportInjury = ({ onBack }) => {
-  const [sent, setSent] = useState(false);
+  const [sent, setSent] = React.useState(false);
   if (sent) return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "80%", padding: 40, textAlign: "center" }}>
       <div style={{ width: 80, height: 80, borderRadius: 40, background: C.redLight, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
-        <span style={{ fontSize: 40 }}>🚨</span>
+        <Icon name="alert" size={40} color={C.red} fill={C.redLight} />
       </div>
       <h2 style={{ fontSize: 24, fontWeight: 700, color: C.text, margin: "0 0 8px" }}>Report Submitted</h2>
       <p style={{ fontSize: 15, color: C.text3, lineHeight: 1.5, margin: 0 }}>Your injury report has been sent to the Safety Officer and your Line Supervisor. A safety team member will reach out within 15 minutes.</p>
@@ -843,7 +897,7 @@ const ReportInjury = ({ onBack }) => {
     <div style={{ paddingBottom: 20 }}>
       <NavBar showBack onBack={onBack} />
       <NavBar title="Report Injury" large />
-      <AlertBanner icon="🚨" color={C.red} bg={C.redLight} title="Emergency?" message="If this is a medical emergency, call 911 immediately. This form is for non-emergency injury reporting." />
+      <AlertBanner iconName="emergency" color={C.red} bg={C.redLight} title="Emergency?" message="If this is a medical emergency, call 911 immediately. This form is for non-emergency injury reporting." />
       <div style={{ padding: "0 20px" }}>
         <Card style={{ marginBottom: 12 }}>
           <div style={{ fontSize: 12, fontWeight: 700, color: C.text3, letterSpacing: 0.8, marginBottom: 10, textTransform: "uppercase" }}>Injury Type</div>
@@ -874,20 +928,20 @@ const ReportInjury = ({ onBack }) => {
 
 // ─── MAIN APP ──────────────────────────────────────────────
 export default function SafeShiftApp() {
-  const [role, setRole] = useState(null);
-  const [screen, setScreen] = useState("home");
-  const [tab, setTab] = useState("home");
+  const [role, setRole] = React.useState(null);
+  const [screen, setScreen] = React.useState("home");
+  const [tab, setTab] = React.useState("home");
 
   const go = (s) => { setScreen(s); setTab(s === "home" ? "home" : tab); };
   const back = () => setScreen("home");
   const reset = () => { setRole(null); setScreen("home"); setTab("home"); };
 
   const workerTabs = [
-    { id: "home", label: "Home", icon: "🏠" },
-    { id: "log", label: "Log", icon: "📝" },
-    { id: "journal", label: "Journal", icon: "📖" },
-    { id: "vitals", label: "Vitals", icon: "⌚" },
-    { id: "history", label: "History", icon: "📊" },
+    { id: "home", label: "Home", iconName: "home" },
+    { id: "log", label: "Log", iconName: "log" },
+    { id: "journal", label: "Journal", iconName: "journal" },
+    { id: "vitals", label: "Vitals", iconName: "vitals" },
+    { id: "history", label: "History", iconName: "history" },
   ];
 
   const renderWorkerScreen = () => {
@@ -925,6 +979,34 @@ export default function SafeShiftApp() {
       <PhoneFrame 
         hasAlert={role === "worker" && screen === "home"}
         footer={role === "worker" && screen === "home" && <TabBar tabs={workerTabs} active={tab} onSelect={id => { setTab(id); go(id); }} />}
+        overlay={role && (
+          <button 
+            onClick={reset}
+            style={{ 
+              position: "absolute", 
+              top: 54, 
+              right: 16, 
+              background: "rgba(0,0,0,0.08)", 
+              color: "#666", 
+              border: "none", 
+              borderRadius: 14, 
+              padding: "6px 12px", 
+              fontSize: 10, 
+              fontWeight: 700, 
+              textTransform: "uppercase",
+              letterSpacing: 0.5,
+              cursor: "pointer",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              zIndex: 1000,
+              display: "flex",
+              alignItems: "center",
+              gap: 4
+            }}
+          >
+            <span>✕</span> Exit Role
+          </button>
+        )}
       >
         {!role ? (
           <RoleSelect onPick={r => { setRole(r); setScreen("home"); }} />
@@ -934,29 +1016,6 @@ export default function SafeShiftApp() {
           <Supervisor />
         ) : (
           <Safety />
-        )}
-
-        {role && (
-          <button 
-            onClick={reset}
-            style={{ 
-              position: "absolute", 
-              bottom: role === "worker" && screen === "home" ? 84 : 30, 
-              left: 20, 
-              background: "rgba(0,0,0,0.05)", 
-              color: "#666", 
-              border: "none", 
-              borderRadius: 12, 
-              padding: "6px 10px", 
-              fontSize: 11, 
-              fontWeight: 600, 
-              cursor: "pointer",
-              backdropFilter: "blur(10px)",
-              zIndex: 100
-            }}
-          >
-            ← Switch Role
-          </button>
         )}
       </PhoneFrame>
     </div>
