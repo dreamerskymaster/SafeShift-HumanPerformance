@@ -67,24 +67,29 @@ const HomeIndicator = () => (
   </div>
 );
 
-const PhoneFrame = ({ children, hasAlert }) => (
-  <div style={{ 
-    width: 393, 
-    height: 852, 
+const PhoneFrame = ({ children, footer, hasAlert }) => (
+  <div className="phone-container" style={{ 
+    width: "100%",
+    maxWidth: 430,
+    height: "100dvh", 
+    maxHeight: 932,
     background: C.bg, 
-    borderRadius: 54, 
+    borderRadius: "min(54px, 12vw)", 
     overflow: "hidden", 
     position: "relative", 
     boxShadow: "0 60px 140px -20px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,0,0,0.1), inset 0 0 0 1px rgba(255,255,255,0.2)", 
     fontFamily: font, 
     display: "flex", 
     flexDirection: "column", 
-    WebkitFontSmoothing: "antialiased" 
+    WebkitFontSmoothing: "antialiased",
+    margin: "auto",
+    transition: "all 0.3s ease"
   }}>
     <StatusBar hasAlert={hasAlert} />
     <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch", position: "relative" }}>
       {children}
     </div>
+    {footer}
     <HomeIndicator />
   </div>
 );
@@ -121,9 +126,9 @@ const NavBar = ({ title, large, showBack, onBack, right }) => (
 );
 
 const TabBar = ({ tabs, active, onSelect }) => (
-  <div style={{ position: "absolute", bottom: 34, left: 0, right: 0, height: 50, background: "rgba(249,249,249,0.94)", backdropFilter: "blur(30px)", WebkitBackdropFilter: "blur(30px)", borderTop: `0.33px solid ${C.border}`, display: "flex", justifyContent: "space-around", alignItems: "center", zIndex: 20 }}>
+  <div style={{ height: 52, background: "rgba(249,249,249,0.94)", backdropFilter: "blur(30px)", WebkitBackdropFilter: "blur(30px)", borderTop: `0.33px solid ${C.border}`, display: "flex", justifyContent: "space-around", alignItems: "center", zIndex: 20 }}>
     {tabs.map(t => (
-      <button key={t.id} onClick={() => onSelect(t.id)} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 1, color: active === t.id ? C.primary : C.text3, padding: "4px 0", minWidth: 56 }}>
+      <button key={t.id} onClick={() => onSelect(t.id)} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 1, color: active === t.id ? C.primary : C.text3, padding: "4px 0", minWidth: 56, outline: "none" }}>
         <span style={{ fontSize: 22, lineHeight: 1 }}>{t.icon}</span>
         <span style={{ fontSize: 10, fontWeight: 500, letterSpacing: 0.1 }}>{t.label}</span>
       </button>
@@ -898,33 +903,62 @@ export default function SafeShiftApp() {
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", background: "linear-gradient(145deg, #D1D1D6, #E5E5EA)", padding: 20 }}>
-      <PhoneFrame hasAlert={role === "worker" && screen === "home"}>
+    <div style={{ 
+      display: "flex", 
+      justifyContent: "center", 
+      alignItems: "center", 
+      minHeight: "100vh", 
+      background: "linear-gradient(145deg, #D1D1D6, #E5E5EA)",
+      padding: "min(20px, 2vw)"
+    }}>
+      <style>{`
+        @media (max-width: 500px) {
+          body { background: white !important; }
+          .phone-container { 
+            max-width: 100% !important; 
+            max-height: 100% !important; 
+            border-radius: 0 !important; 
+            box-shadow: none !important;
+          }
+        }
+      `}</style>
+      <PhoneFrame 
+        hasAlert={role === "worker" && screen === "home"}
+        footer={role === "worker" && screen === "home" && <TabBar tabs={workerTabs} active={tab} onSelect={id => { setTab(id); go(id); }} />}
+      >
         {!role ? (
           <RoleSelect onPick={r => { setRole(r); setScreen("home"); }} />
         ) : role === "worker" ? (
-          <>
-            {renderWorkerScreen()}
-            {screen === "home" && <TabBar tabs={workerTabs} active={tab} onSelect={id => { setTab(id); go(id); }} />}
-          </>
+          renderWorkerScreen()
         ) : role === "supervisor" ? (
           <Supervisor />
         ) : (
           <Safety />
         )}
+
+        {role && (
+          <button 
+            onClick={reset}
+            style={{ 
+              position: "absolute", 
+              bottom: role === "worker" && screen === "home" ? 84 : 30, 
+              left: 20, 
+              background: "rgba(0,0,0,0.05)", 
+              color: "#666", 
+              border: "none", 
+              borderRadius: 12, 
+              padding: "6px 10px", 
+              fontSize: 11, 
+              fontWeight: 600, 
+              cursor: "pointer",
+              backdropFilter: "blur(10px)",
+              zIndex: 100
+            }}
+          >
+            ← Switch Role
+          </button>
+        )}
       </PhoneFrame>
-      {/* Role switch button */}
-      {role && (
-        <button onClick={reset} style={{
-          position: "fixed", bottom: 20, left: 20, padding: "10px 18px",
-          background: "rgba(0,0,0,0.7)", color: "#fff", border: "none",
-          borderRadius: 22, fontSize: 13, fontWeight: 600, cursor: "pointer",
-          fontFamily: font, backdropFilter: "blur(10px)", display: "flex",
-          alignItems: "center", gap: 6, boxShadow: "0 4px 16px rgba(0,0,0,0.2)"
-        }}>
-          ← Switch Role
-        </button>
-      )}
     </div>
   );
 }
