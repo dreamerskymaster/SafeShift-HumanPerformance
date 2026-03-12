@@ -2,6 +2,33 @@ import React from 'react';
 
 const font = "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif";
 
+// ─── DESIGN SYSTEM ─────────────────────────────────────────
+const C = {
+  bg: "#F2F2F7",
+  card: "#FFFFFF",
+  primary: "#0A84FF",
+  primaryLight: "rgba(10, 132, 255, 0.12)",
+  green: "#34C759",
+  greenLight: "rgba(52, 199, 89, 0.12)",
+  orange: "#FF9500",
+  orangeLight: "rgba(255, 149, 0, 0.12)",
+  red: "#FF3B30",
+  redLight: "rgba(255, 59, 48, 0.12)",
+  yellow: "#FFCC00",
+  purple: "#AF52DE",
+  purpleLight: "rgba(175, 82, 222, 0.12)",
+  teal: "#5856D6",
+  text: "#000000",
+  text2: "#3C3C43",
+  text3: "#8E8E93",
+  sep: "rgba(60, 60, 67, 0.1)",
+  border: "rgba(60, 60, 67, 0.08)",
+  grayBg: "#E5E5EA",
+  grayFill: "rgba(120, 120, 128, 0.16)",
+  shadow: "0 8px 24px -4px rgba(0,0,0,0.06), 0 2px 6px -1px rgba(0,0,0,0.04)",
+  shadowLarge: "0 20px 40px -8px rgba(0,0,0,0.12), 0 8px 16px -4px rgba(0,0,0,0.08)",
+};
+
 // ─── ICON SYSTEM ──────────────────────────────────────────
 const Icon = ({ name, size = 24, color = "currentColor", fill = "none" }) => {
   const icons = {
