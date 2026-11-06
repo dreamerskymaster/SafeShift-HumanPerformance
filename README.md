@@ -1,5 +1,10 @@
 # 🛡️ SafeShift | Human Performance Lab
 
+[![Launch Video](https://img.shields.io/badge/Launch%20Video-MP4-ff0055?style=for-the-badge&logo=youtube&logoColor=white)](brag-output/brag.mp4)
+
+![Demo](docs/demo.gif)
+
+
 <p align="center">
   <img src="./public/logo.png" width="300" alt="SafeShift Logo">
 </p>
